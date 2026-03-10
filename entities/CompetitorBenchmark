@@ -1,0 +1,69 @@
+{
+  "name": "CompetitorBenchmark",
+  "type": "object",
+  "properties": {
+    "competitor_name": {
+      "type": "string",
+      "description": "Name of the competitor (e.g., 'Netflix', 'YouTube TV', 'Charter Spectrum')"
+    },
+    "primary_business_model": {
+      "type": "string",
+      "enum": [
+        "Pure SVOD",
+        "Hybrid (SVOD + AVOD)",
+        "vMVPD (Live TV Streaming)",
+        "Traditional Pay-TV (Cable/Satellite)",
+        "Aggregator / Platform"
+      ],
+      "description": "The competitor's main operating model."
+    },
+    "market_share": {
+      "type": "number",
+      "description": "Estimated US market share percentage (e.g., 22.5)"
+    },
+    "yoy_subscriber_growth": {
+      "type": "number",
+      "description": "Year-over-Year subscriber growth or decline percentage (e.g., 4.2 or -3.1)"
+    },
+    "core_offering": {
+      "type": "string",
+      "description": "Name of their most popular tier (e.g., 'Standard with Ads', 'Base English Package')"
+    },
+    "monthly_price_usd": {
+      "type": "number",
+      "description": "The exact numeric monthly cost of their core offering in USD (e.g., 15.49). Use numbers, not strings, for calculations."
+    },
+    "promotional_offer": {
+      "type": "string",
+      "description": "Current aggressive market offer (e.g., 'First 3 months for $5.99/mo', 'Free NFL Sunday Ticket')"
+    },
+    "content_focus": {
+      "type": "string",
+      "description": "Their content moat (e.g., 'Prestige Originals & Documentaries', 'Live Local Sports', 'Family & Kids')"
+    },
+    "strategic_move": {
+      "type": "string",
+      "description": "Recent major strategic shift (e.g., 'Password sharing crackdown', 'Merging apps', 'Price hike in Q1 2026')"
+    },
+    "vulnerability": {
+      "type": "string",
+      "description": "The competitor's biggest weakness to exploit (e.g., 'High price fatigue', 'Losing regional sports networks', 'Clunky UI')"
+    },
+    "threat_level": {
+      "type": "string",
+      "enum": [
+        "Low",
+        "Medium",
+        "High",
+        "Critical"
+      ],
+      "description": "Overall risk this competitor poses to our subscriber base."
+    }
+  },
+  "required": [
+    "competitor_name",
+    "primary_business_model",
+    "monthly_price_usd",
+    "threat_level"
+  ]
+}

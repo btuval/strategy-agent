@@ -1,0 +1,78 @@
+{
+  "name": "MarketData",
+  "type": "object",
+  "properties": {
+    "dma": {
+      "type": "string",
+      "description": "Designated Market Area name (e.g., 'Atlanta, GA', 'New York, NY')"
+    },
+    "state": {
+      "type": "string",
+      "description": "US state abbreviation"
+    },
+    "date": {
+      "type": "string",
+      "format": "date",
+      "description": "Data collection or reporting date (YYYY-MM-DD)"
+    },
+    "total_addressable_market": {
+      "type": "number",
+      "description": "Total households (HHs) in the market"
+    },
+    "broadband_penetration": {
+      "type": "number",
+      "description": "Percentage of households with high-speed internet (critical for streaming vs. satellite viability)"
+    },
+    "market_penetration": {
+      "type": "number",
+      "description": "Our current subscriber penetration percentage in this DMA"
+    },
+    "market_share_rank": {
+      "type": "number",
+      "description": "Our position in this market relative to competitors (e.g., 1 for Market Leader, 2, 3)"
+    },
+    "regional_churn_rate": {
+      "type": "number",
+      "description": "Annualized churn rate specific to this DMA"
+    },
+    "avg_acquisition_cost": {
+      "type": "number",
+      "description": "Average Customer Acquisition Cost (CAC) in this specific market in USD"
+    },
+    "competitive_intensity": {
+      "type": "number",
+      "description": "Competition intensity score (1-5, 5 being hyper-competitive)"
+    },
+    "avg_competitor_price": {
+      "type": "number",
+      "description": "Average entry-level price of the top 2 competitors in this market in USD"
+    },
+    "key_local_content_drivers": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Local content that drives subscriptions (e.g., ['Bally Sports South', 'Atlanta Braves blackout territory'])"
+    },
+    "local_events": {
+      "type": "string",
+      "description": "Notable local market events impacting sales (e.g., 'Major competitor ISP outage', 'Local NFL team in playoffs')"
+    },
+    "market_opportunity_status": {
+      "type": "string",
+      "enum": [
+        "Defend & Retain",
+        "Aggressive Growth",
+        "Harvest (Price Increases)",
+        "Monitor"
+      ],
+      "description": "AI-derived strategic posture for this specific market"
+    }
+  },
+  "required": [
+    "dma",
+    "date",
+    "total_addressable_market",
+    "market_penetration"
+  ]
+}

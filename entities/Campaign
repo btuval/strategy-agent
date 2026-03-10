@@ -1,0 +1,85 @@
+{
+  "name": "Campaign",
+  "type": "object",
+  "properties": {
+    "campaign_name": {
+      "type": "string",
+      "description": "The internal name of the campaign (e.g., 'Q3 SVOD Upsell - Premium Bundle')"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "Draft",
+        "In Review",
+        "Live",
+        "Paused",
+        "Completed"
+      ],
+      "default": "Draft",
+      "description": "Current lifecycle stage of the campaign."
+    },
+    "campaign_objective": {
+      "type": "string",
+      "enum": [
+        "Acquisition",
+        "Retention (Anti-Churn)",
+        "Upsell / Cross-sell (SVOD)",
+        "Win-back",
+        "Price Increase Mitigation"
+      ],
+      "description": "The primary business goal of this campaign."
+    },
+    "target_audience": {
+      "type": "string",
+      "description": "Specific demographic or behavioral segment (e.g., 'Legacy Satellite users with high flight risk')."
+    },
+    "primary_channel": {
+      "type": "string",
+      "enum": [
+        "Cross-channel (Omnichannel)",
+        "Linear TV Ad Spots",
+        "Connected TV (CTV)",
+        "Email Marketing",
+        "In-App / On-Device Notifications",
+        "Paid Social"
+      ],
+      "description": "The primary medium used to deliver the campaign."
+    },
+    "budget": {
+      "type": "number",
+      "description": "Total allocated budget in USD (e.g., 1500000)."
+    },
+    "projected_cpa": {
+      "type": "number",
+      "description": "Projected Cost Per Acquisition or Cost Per Save in USD (e.g., 65.50)."
+    },
+    "projected_roi": {
+      "type": "number",
+      "description": "Expected Return on Investment as a percentage (e.g., 125.0)."
+    },
+    "expected_conversion_rate": {
+      "type": "number",
+      "description": "Expected conversion rate percentage (e.g., 4.2)."
+    },
+    "start_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Campaign launch date (YYYY-MM-DD)."
+    },
+    "end_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Campaign conclusion date (YYYY-MM-DD)."
+    },
+    "ai_generated_strategy": {
+      "type": "string",
+      "description": "Detailed, long-form strategic logic, including messaging pillars, offer mechanics, and risk mitigation."
+    }
+  },
+  "required": [
+    "campaign_name",
+    "status",
+    "campaign_objective",
+    "budget"
+  ]
+}

@@ -1,0 +1,72 @@
+{
+  "name": "AudienceSegment",
+  "type": "object",
+  "properties": {
+    "segment_name": {
+      "type": "string",
+      "description": "Segment name (e.g., 'Cord-Cutters', 'Legacy Satellite Loyalists', 'Sports Fanatics')"
+    },
+    "primary_platform": {
+      "type": "string",
+      "enum": [
+        "Satellite Only",
+        "Streaming Only",
+        "Hybrid (Satellite + Stream)",
+        "SVOD Only"
+      ],
+      "description": "The primary delivery method this segment uses."
+    },
+    "arpu": {
+      "type": "number",
+      "description": "Average Revenue Per User in USD (e.g., 145.50)"
+    },
+    "churn_rate": {
+      "type": "number",
+      "description": "Annual churn rate percentage (e.g., 12.5)"
+    },
+    "price_elasticity": {
+      "type": "number",
+      "description": "Percentage point increase in churn for every 1% increase in price (e.g., 0.05). Higher means more price-sensitive."
+    },
+    "size_in_millions": {
+      "type": "number",
+      "description": "Segment size in millions of subscribers"
+    },
+    "svod_attach_rate": {
+      "type": "number",
+      "description": "Average number of premium SVOD add-ons (e.g., Max, Showtime) subscribed to by this segment (e.g., 1.5)"
+    },
+    "cac": {
+      "type": "number",
+      "description": "Customer Acquisition Cost in USD for this segment"
+    },
+    "primary_content_preference": {
+      "type": "string",
+      "enum": [
+        "Live Sports",
+        "Linear News",
+        "Originals & Prestige TV",
+        "Movies",
+        "Kids & Family",
+        "Reality & Unscripted"
+      ],
+      "description": "Primary content driver for retention"
+    },
+    "engagement_level": {
+      "type": "string",
+      "enum": [
+        "Low (Under 10 hrs/week)",
+        "Medium (10-25 hrs/week)",
+        "High (25-40 hrs/week)",
+        "Power User (40+ hrs/week)"
+      ],
+      "description": "Average viewing engagement"
+    }
+  },
+  "required": [
+    "segment_name",
+    "primary_platform",
+    "arpu",
+    "churn_rate"
+  ]
+}

@@ -1,0 +1,100 @@
+{
+  "name": "CompetitorOffer",
+  "type": "object",
+  "properties": {
+    "competitor_name": {
+      "type": "string",
+      "description": "Name of the competitor launching the offer (e.g., 'YouTube TV', 'Charter Spectrum', 'Disney+')"
+    },
+    "dma": {
+      "type": "string",
+      "description": "Designated Market Area if regional, or 'National' if nationwide (e.g., 'Los Angeles, CA', 'National')"
+    },
+    "offer_name": {
+      "type": "string",
+      "description": "The consumer-facing name of the promotion (e.g., 'The Ultimate Sports Bundle', 'Switch & Save')"
+    },
+    "offer_type": {
+      "type": "string",
+      "enum": [
+        "price_reduction",
+        "bundle_svod",
+        "bundle_isp",
+        "free_trial_extension",
+        "hardware_subsidy",
+        "content_exclusivity",
+        "contract_buyout"
+      ],
+      "description": "The strategic mechanism of the competitive offer"
+    },
+    "effective_date": {
+      "type": "string",
+      "format": "date",
+      "description": "When the offer launched (YYYY-MM-DD)"
+    },
+    "expiration_date": {
+      "type": "string",
+      "format": "date",
+      "description": "When the offer ends, or 'TBD' if evergreen"
+    },
+    "price_point": {
+      "type": "number",
+      "description": "The monthly promotional price in USD (e.g., 49.99)"
+    },
+    "standard_price_point": {
+      "type": "number",
+      "description": "The normal price after the promo ends in USD (e.g., 72.99)"
+    },
+    "included_services": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "List of SVODs, networks, or perks included (e.g., ['Netflix Standard', 'Max', 'Free Roku'])"
+    },
+    "our_tier_at_risk": {
+      "type": "string",
+      "description": "Which of our specific base plans or SVOD add-ons this offer directly attacks (e.g., 'Premium Satellite Tier', 'Sports Add-on')"
+    },
+    "marketing_aggressiveness": {
+      "type": "string",
+      "enum": [
+        "Quiet Test (Digital Only)",
+        "Moderate (Regional TV + Digital)",
+        "Heavy (National TV + Homepage Takeovers)",
+        "Aggressive (Direct Mail + Contract Buyouts)"
+      ],
+      "description": "How heavily the competitor is funding the go-to-market for this offer"
+    },
+    "estimated_impact": {
+      "type": "string",
+      "enum": [
+        "Low",
+        "Medium",
+        "High",
+        "Critical"
+      ],
+      "description": "Estimated impact velocity on our subscriber base"
+    },
+    "affected_customers": {
+      "type": "number",
+      "description": "Estimated number of our current customers who fit the exact profile to be swayed by this offer"
+    },
+    "arr_at_risk": {
+      "type": "number",
+      "description": "Estimated Annual Recurring Revenue at risk in USD (calculated as affected_customers * ARPU)"
+    },
+    "recommended_counter_play": {
+      "type": "string",
+      "description": "A 1-2 sentence immediate tactical recommendation for our marketing team"
+    }
+  },
+  "required": [
+    "competitor_name",
+    "offer_name",
+    "offer_type",
+    "effective_date",
+    "our_tier_at_risk",
+    "estimated_impact"
+  ]
+}

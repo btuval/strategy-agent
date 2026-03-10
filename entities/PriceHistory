@@ -1,0 +1,81 @@
+{
+  "name": "PriceHistory",
+  "type": "object",
+  "properties": {
+    "plan_tier": {
+      "type": "string",
+      "enum": [
+        "Basic",
+        "Standard",
+        "Premium",
+        "Ultimate",
+        "All Tiers (Across-the-board)"
+      ],
+      "description": "The specific base plan or cohort affected."
+    },
+    "effective_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date when the price change took effect for existing customers (YYYY-MM-DD)."
+    },
+    "price_usd": {
+      "type": "number",
+      "description": "The new monthly price in USD (e.g., 84.99)."
+    },
+    "previous_price_usd": {
+      "type": "number",
+      "description": "The old monthly price in USD before the hike (e.g., 79.99)."
+    },
+    "change_pct": {
+      "type": "number",
+      "description": "Percentage change from the previous price (e.g., 6.25)."
+    },
+    "price_change_reason": {
+      "type": "string",
+      "enum": [
+        "Content Cost Inflation (e.g., Sports Rights)",
+        "Value-Add / Feature Inclusion",
+        "Margin Optimization",
+        "Promotional Roll-off Standardization"
+      ],
+      "description": "The internal business driver for the price action."
+    },
+    "churn_spike_pct": {
+      "type": "number",
+      "description": "The peak absolute percentage point increase in churn during the 60 days following the announcement (e.g., 1.5)."
+    },
+    "churn_recovery_months": {
+      "type": "number",
+      "description": "Number of months it took for the churn rate to return to the pre-increase baseline (e.g., 4)."
+    },
+    "annual_revenue_impact_usd": {
+      "type": "number",
+      "description": "Net Annual Revenue impact in USD, factoring in the ARPU gain minus the revenue lost to the churn spike."
+    },
+    "arpu_impact_usd": {
+      "type": "number",
+      "description": "The actual realized ARPU increase in USD (often lower than the sticker price increase due to retention offers)."
+    },
+    "competitor_reaction": {
+      "type": "string",
+      "enum": [
+        "Matched Price Increase",
+        "Launched Acquisition Promo",
+        "No Immediate Reaction",
+        "Exploited via Negative PR"
+      ],
+      "description": "How the broader market responded to our pricing move."
+    },
+    "notes": {
+      "type": "string",
+      "description": "Contextual details on how the increase was communicated or mitigated (e.g., 'Grandfathered legacy users for 6 months')."
+    }
+  },
+  "required": [
+    "plan_tier",
+    "effective_date",
+    "price_usd",
+    "previous_price_usd",
+    "change_pct"
+  ]
+}

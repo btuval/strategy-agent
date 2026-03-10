@@ -1,0 +1,141 @@
+{
+  "name": "StrategyAnalysis",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "A punchy, executive-level title (e.g., 'Q3 Disney+ Bundle Integration Strategy')"
+    },
+    "analysis_type": {
+      "type": "string",
+      "enum": [
+        "pricing",
+        "churn",
+        "competitive",
+        "package",
+        "market",
+        "svod_optimization"
+      ],
+      "description": "Primary category of the strategic analysis"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "reviewed",
+        "approved",
+        "implemented",
+        "rejected"
+      ],
+      "default": "draft",
+      "description": "Execution status of this strategy"
+    },
+    "priority": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high",
+        "critical"
+      ],
+      "description": "Urgency level of implementing this strategy"
+    },
+    "executive_summary": {
+      "type": "string",
+      "description": "Bottom-line summary answering 'What are we doing and why?' (Max 3 sentences)"
+    },
+    "primary_risk": {
+      "type": "string",
+      "description": "The biggest threat to this strategy succeeding (e.g., 'High churn elasticity in Basic tier')"
+    },
+    "financial_impact": {
+      "type": "number",
+      "description": "Net projected financial impact in USD (can be negative if mitigating a loss)"
+    },
+    "revenue_change_pct": {
+      "type": "number",
+      "description": "Projected top-line revenue change percentage (e.g., 4.2)"
+    },
+    "churn_impact_pct": {
+      "type": "number",
+      "description": "Projected change in the annual churn rate in percentage points (e.g., 0.5)"
+    },
+    "affected_customers": {
+      "type": "number",
+      "description": "Estimated volume of customers impacted by this strategy"
+    },
+    "target_segments": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Specific audience segments this targets (e.g., ['Legacy Satellite', 'High-Risk Cord Cutters'])"
+    },
+    "time_to_impact": {
+      "type": "string",
+      "enum": [
+        "Immediate (< 30 days)",
+        "Short-term (1-3 months)",
+        "Medium-term (3-6 months)",
+        "Long-term (6-12+ months)"
+      ],
+      "description": "How quickly the financial impact will be realized"
+    },
+    "confidence_score": {
+      "type": "number",
+      "description": "AI confidence in the projection (1-100) based on historical data availability"
+    },
+    "recommendations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "List of strategic moves or recommendations"
+    },
+    "metrics": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "metric_name": {
+            "type": "string"
+          },
+          "current_value": {
+            "type": "string"
+          },
+          "proposed_value": {
+            "type": "string"
+          },
+          "change": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "Key metrics table comparing Current vs. Proposed states"
+    },
+    "action_plan": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "step": {
+            "type": "string"
+          },
+          "owner": {
+            "type": "string"
+          },
+          "timeline": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "Chronological steps to execute the strategy"
+    }
+  },
+  "required": [
+    "title",
+    "analysis_type",
+    "executive_summary",
+    "primary_risk"
+  ]
+}

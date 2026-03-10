@@ -1,0 +1,129 @@
+{
+  "name": "Customer",
+  "type": "object",
+  "properties": {
+    "customer_id": {
+      "type": "string",
+      "description": "Unique customer ID (e.g., '84A9302')"
+    },
+    "activation_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Customer activation date (YYYY-MM-DD)"
+    },
+    "tenure_months": {
+      "type": "number",
+      "description": "Tenure in months calculated from activation date"
+    },
+    "primary_hardware": {
+      "type": "string",
+      "enum": [
+        "Satellite Dish & DVR",
+        "Proprietary Streaming Box",
+        "BYOD (Smart TV / Apple TV / Roku)",
+        "Mobile App Only"
+      ],
+      "description": "The primary way the customer consumes the service. Indicates physical lock-in."
+    },
+    "state": {
+      "type": "string",
+      "description": "US state abbreviation (e.g., 'GA')"
+    },
+    "dma": {
+      "type": "string",
+      "description": "Designated Market Area (e.g., 'Atlanta')"
+    },
+    "plan_tier": {
+      "type": "string",
+      "enum": [
+        "Basic",
+        "Standard",
+        "Premium",
+        "Ultimate"
+      ],
+      "description": "Customer base plan tier"
+    },
+    "bill_amount": {
+      "type": "number",
+      "description": "Total monthly billed amount in USD (e.g., 145.50)"
+    },
+    "monthly_discount_amount": {
+      "type": "number",
+      "description": "Total dollar amount of active discounts applied to the bill (e.g., 20.00)"
+    },
+    "clv": {
+      "type": "number",
+      "description": "Projected Customer Lifetime Value in USD (e.g., 2400.00)"
+    },
+    "failed_payments": {
+      "type": "number",
+      "description": "Number of failed payments in the last 12 months"
+    },
+    "in_collection": {
+      "type": "boolean",
+      "description": "Whether the customer is currently in collections"
+    },
+    "autopay": {
+      "type": "boolean",
+      "description": "Whether autopay is active (reduces churn risk)"
+    },
+    "has_svod": {
+      "type": "boolean",
+      "description": "Whether the customer pays for premium SVOD add-ons through our billing"
+    },
+    "svod_services": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "List of active SVODs (e.g., ['Max', 'Paramount+'])"
+    },
+    "monthly_watch_hours": {
+      "type": "number",
+      "description": "Average hours of content consumed per month (e.g., 110)"
+    },
+    "repeated_calls": {
+      "type": "number",
+      "description": "Number of inbound customer service calls in the past 90 days"
+    },
+    "promo_status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "rolling_off_soon",
+        "expired",
+        "none"
+      ],
+      "description": "Current status of promotional pricing"
+    },
+    "competition_intensity": {
+      "type": "number",
+      "description": "Competition intensity score in their DMA (1-5, 5 being highest)"
+    },
+    "churn_score": {
+      "type": "number",
+      "description": "Algorithmic churn probability score (0-100)"
+    },
+    "churn_risk": {
+      "type": "string",
+      "enum": [
+        "Low",
+        "Medium",
+        "High",
+        "Critical"
+      ],
+      "description": "Categorical churn propensity"
+    },
+    "recommendation": {
+      "type": "string",
+      "description": "AI-generated next-best-action (e.g., 'Offer $10 loyalty credit', 'Do not engage - negative CLV')"
+    }
+  },
+  "required": [
+    "customer_id",
+    "plan_tier",
+    "bill_amount",
+    "churn_risk",
+    "clv"
+  ]
+}

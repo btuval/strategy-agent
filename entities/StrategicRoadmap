@@ -1,0 +1,75 @@
+{
+  "name": "StrategicRoadmap",
+  "type": "object",
+  "properties": {
+    "initiative_name": {
+      "type": "string",
+      "description": "Clear, action-oriented name (e.g., 'Q3 Disney+ Bundle Integration', 'Legacy Satellite Save Queue Revamp')"
+    },
+    "quarter": {
+      "type": "string",
+      "enum": [
+        "Q1",
+        "Q2",
+        "Q3",
+        "Q4"
+      ],
+      "description": "Target launch quarter"
+    },
+    "year": {
+      "type": "number",
+      "description": "Target year (e.g., 2026)"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "Revenue Growth",
+        "Churn Mitigation",
+        "Market Share / Acquisition",
+        "Product & Packaging",
+        "Strategic Partnerships"
+      ],
+      "description": "Primary business driver for the initiative"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "Draft / Proposed",
+        "Approved",
+        "In Progress",
+        "Blocked",
+        "Completed"
+      ],
+      "default": "Draft / Proposed",
+      "description": "Current execution status"
+    },
+    "executive_sponsor": {
+      "type": "string",
+      "description": "The C-suite or VP owner accountable for delivery (e.g., 'CMO', 'VP of Product', 'Head of Retention')"
+    },
+    "budget_allocation_usd": {
+      "type": "number",
+      "description": "Approved or requested budget in USD (e.g., 500000)"
+    },
+    "target_metric_impact": {
+      "type": "string",
+      "description": "The specific, numeric KPI goal (e.g., '-1.2% Annual Churn', '+$45M ARR', '+150k Gross Adds')"
+    },
+    "impact_description": {
+      "type": "string",
+      "description": "1-2 sentence summary of how the initiative achieves the target impact"
+    },
+    "primary_risk_or_dependency": {
+      "type": "string",
+      "description": "The biggest blocker to success (e.g., 'Requires renegotiation of Warner Bros Discovery carriage rights')"
+    }
+  },
+  "required": [
+    "initiative_name",
+    "quarter",
+    "year",
+    "category",
+    "status",
+    "target_metric_impact"
+  ]
+}

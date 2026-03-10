@@ -1,0 +1,82 @@
+{
+  "name": "ExecutiveKPI",
+  "type": "object",
+  "properties": {
+    "metric_name": {
+      "type": "string",
+      "description": "Name of the KPI (e.g., 'Total Annual Revenue', 'Average Churn Rate', 'Blended ARPU')"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "Financial",
+        "Subscriber Growth",
+        "Retention & Churn",
+        "Engagement",
+        "Operational Cost"
+      ],
+      "description": "The business unit or category this metric belongs to."
+    },
+    "current_value_numeric": {
+      "type": "number",
+      "description": "The exact raw numeric value for chart rendering and AI math (e.g., 3200000000 for $3.2B, or 14.5 for 14.5%)."
+    },
+    "formatted_value": {
+      "type": "string",
+      "description": "The UI-friendly formatted string (e.g., '$3.2B', '14.5%', '2.1M')."
+    },
+    "target_value_numeric": {
+      "type": "number",
+      "description": "The budgeted or target numeric value for this timeframe."
+    },
+    "variance_pct": {
+      "type": "number",
+      "description": "Percentage variance between current_value and target_value (e.g., -2.5 meaning 2.5% below target)."
+    },
+    "trend_direction": {
+      "type": "string",
+      "enum": [
+        "Up",
+        "Down",
+        "Flat"
+      ],
+      "description": "Direction of the metric compared to the previous period."
+    },
+    "trend_context": {
+      "type": "string",
+      "description": "Contextual text for the UI (e.g., '+1.2% YoY', '-0.5pp MoM')."
+    },
+    "timeframe": {
+      "type": "string",
+      "enum": [
+        "MTD",
+        "QTD",
+        "YTD",
+        "Annual Projected"
+      ],
+      "description": "The time period this metric represents."
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "Overperforming",
+        "On Track",
+        "Warning",
+        "Critical"
+      ],
+      "description": "Health status of the metric relative to its target."
+    },
+    "primary_owner": {
+      "type": "string",
+      "description": "The C-suite or VP title accountable for this metric (e.g., 'CMO', 'Head of Retention')."
+    }
+  },
+  "required": [
+    "metric_name",
+    "category",
+    "current_value_numeric",
+    "formatted_value",
+    "status",
+    "timeframe"
+  ]
+}
