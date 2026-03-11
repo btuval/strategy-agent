@@ -7,41 +7,9 @@ import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 // Import the flexible chart component we created
 import { FlexibleChart } from '@/components/dashboard/FlexibleChart';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-
-// Helpers for tool result display
-function getChartConfig(parsed) {
-  if (!parsed || typeof parsed !== 'object') return null;
-  const candidate = parsed.data && typeof parsed.data === 'object' && parsed.data.chartType
-    ? parsed.data
-    : parsed.result && typeof parsed.result === 'object' && parsed.result.chartType
-      ? parsed.result
-      : parsed;
-  const hasChart = candidate.chartType && candidate.series && Array.isArray(candidate.data) && candidate.data.length > 0;
-  return hasChart ? candidate : null;
-}
-
-function getTableData(parsed) {
-  if (!parsed || typeof parsed !== 'object') return null;
-  let rows = null;
-  if (Array.isArray(parsed)) {
-    rows = parsed.every(item => item && typeof item === 'object') ? parsed : null;
-  } else if (Array.isArray(parsed.data)) {
-    rows = parsed.data.every(item => item && typeof item === 'object') ? parsed.data : null;
-  } else if (Array.isArray(parsed.results)) {
-    rows = parsed.results.every(item => item && typeof item === 'object') ? parsed.results : null;
-  } else if (Array.isArray(parsed.rows)) {
-    rows = parsed.rows.every(item => item && typeof item === 'object') ? parsed.rows : null;
-  }
-  if (!rows || rows.length === 0) return null;
-  const keys = Object.keys(rows[0]);
-  if (keys.length === 0) return null;
-  return { rows, keys };
-}
 
 const FunctionDisplay = ({ toolCall }) => {
   const [expanded, setExpanded] = useState(false);
-  const [showRawJson, setShowRawJson] = useState(false);
   const name = toolCall?.name || "Function";
   const status = toolCall?.status || "pending";
   const results = toolCall?.results;
@@ -51,11 +19,6 @@ const FunctionDisplay = ({ toolCall }) => {
     try { return typeof results === "string" ? JSON.parse(results) : results; } 
     catch { return results; }
   })();
-
-  const chartConfig = parsedResults ? getChartConfig(parsedResults) : null;
-  const tableData = parsedResults ? getTableData(parsedResults) : null;
-  const isTableSameAsChart = chartConfig && tableData && chartConfig.data === tableData.rows;
-  const hasVisual = chartConfig || (tableData && !isTableSameAsChart);
 
   const isError = results && (
     (typeof results === "string" && /error|failed/i.test(results)) ||
@@ -98,50 +61,7 @@ const FunctionDisplay = ({ toolCall }) => {
       </button>
       {expanded && !statusConfig.spin && (
         <div className="mt-1.5 ml-3 pl-3 border-l-2 border-white/10 space-y-2">
-          {hasVisual && (
-            <div className="space-y-4">
-              {chartConfig && (
-                <FlexibleChart config={chartConfig} />
-              )}
-              {tableData && !isTableSameAsChart && (
-                <div className="overflow-x-auto rounded-xl border border-white/10 bg-[#1e293b] shadow-sm my-2">
-                  <Table>
-                    <TableHeader>
-                      <TableRow className="border-white/10 hover:bg-white/5">
-                        {tableData.keys.map((key) => (
-                          <TableHead key={key} className="px-4 py-3 text-slate-300 font-semibold bg-[#0f172a] border-b border-white/10">
-                            {String(key)}
-                          </TableHead>
-                        ))}
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {tableData.rows.map((row, i) => (
-                        <TableRow key={i} className="border-white/5 hover:bg-white/5">
-                          {tableData.keys.map((key) => (
-                            <TableCell key={key} className="px-4 py-3 text-slate-300">
-                              {row[key] != null ? String(row[key]) : '—'}
-                            </TableCell>
-                          ))}
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </div>
-              )}
-              {parsedResults && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="text-slate-400 hover:text-slate-300"
-                  onClick={() => setShowRawJson(!showRawJson)}
-                >
-                  {showRawJson ? 'Hide' : 'Show'} raw JSON
-                </Button>
-              )}
-            </div>
-          )}
-          {(showRawJson || !hasVisual) && parsedResults && (
+          {parsedResults && (
             <pre className="bg-[#0f172a] border border-white/10 rounded-lg p-3 text-[11px] text-slate-300 whitespace-pre-wrap max-h-48 overflow-auto">
               {typeof parsedResults === "object" ? JSON.stringify(parsedResults, null, 2) : parsedResults}
             </pre>

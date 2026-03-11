@@ -10,7 +10,6 @@ import {
   XCircle, Tv, Tag
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { CalculationTooltip } from "@/components/CalculationTooltip";
 
 const riskColors = {
   Low: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
@@ -19,8 +18,8 @@ const riskColors = {
   Critical: "bg-red-600/10 text-red-500 border-red-600/20",
 };
 
-function InfoRow({ icon: Icon, label, value, valueClass = "", calculationLogic = undefined }) {
-  const row = (
+function InfoRow({ icon: Icon, label, value, valueClass = "" }) {
+  return (
     <div className="flex items-start gap-3 py-2.5">
       <Icon className="w-4 h-4 text-slate-500 mt-0.5 flex-shrink-0" />
       <div>
@@ -29,10 +28,6 @@ function InfoRow({ icon: Icon, label, value, valueClass = "", calculationLogic =
       </div>
     </div>
   );
-  if (calculationLogic) {
-    return <CalculationTooltip calculationLogic={calculationLogic} className="block">{row}</CalculationTooltip>;
-  }
-  return row;
 }
 
 function Section({ title, children }) {
@@ -113,9 +108,9 @@ export default function CustomerDetail() {
         <Section title="Account Information">
           <div className="divide-y divide-white/[0.04]">
             <InfoRow icon={Calendar} label="Activation Date" value={customer.activation_date} />
-            <InfoRow icon={TrendingUp} label="Tenure" value={`${customer.tenure_months} months`} calculationLogic="Tenure = months since activation date. Used for retention and LTV analysis." />
+            <InfoRow icon={TrendingUp} label="Tenure" value={`${customer.tenure_months} months`} />
             <InfoRow icon={Shield} label="Plan Tier" value={customer.plan_tier} />
-            <InfoRow icon={CreditCard} label="Bill Amount" value={`$${customer.bill_amount?.toFixed(2)}`} valueClass="text-white font-medium" calculationLogic="Bill Amount = Plan Price + Add-ons. Total recurring monthly charge." />
+            <InfoRow icon={CreditCard} label="Bill Amount" value={`$${customer.bill_amount?.toFixed(2)}`} valueClass="text-white font-medium" />
             <InfoRow icon={Tag} label="Plan Price" value={customer.plan_price ? `$${customer.plan_price.toFixed(2)}` : "—"} />
             <InfoRow icon={Tag} label="Add-ons" value={customer.addons_amount ? `$${customer.addons_amount.toFixed(2)}` : "—"} />
             <InfoRow icon={Calendar} label="Bill Cycle Day" value={`Day ${customer.bill_cycle_day}`} />
@@ -154,7 +149,7 @@ export default function CustomerDetail() {
             <InfoRow icon={MapPin} label="DMA" value={customer.dma} />
             <InfoRow icon={User} label="Competitors" value={customer.market_competitors} />
             <InfoRow icon={TrendingUp} label="Competitor Count" value={customer.competitor_count} />
-            <InfoRow icon={AlertTriangle} label="Competition Intensity" value={`${customer.competition_intensity}/5`} valueClass={customer.competition_intensity >= 4 ? "text-red-400" : customer.competition_intensity >= 3 ? "text-amber-400" : ""} calculationLogic="Competition Intensity = 1–5 scale based on competitor count and market density in the customer's DMA." />
+            <InfoRow icon={AlertTriangle} label="Competition Intensity" value={`${customer.competition_intensity}/5`} valueClass={customer.competition_intensity >= 4 ? "text-red-400" : customer.competition_intensity >= 3 ? "text-amber-400" : ""} />
           </div>
         </Section>
       </div>

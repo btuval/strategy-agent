@@ -1,6 +1,5 @@
 import React from "react";
 import { TrendingUp, TrendingDown, DollarSign, Users, AlertTriangle, ArrowUp, ArrowDown } from "lucide-react";
-import { CalculationTooltip } from "@/components/CalculationTooltip";
 
 const iconMap = {
   revenue: DollarSign,
@@ -10,7 +9,7 @@ const iconMap = {
   impact: TrendingUp
 };
 
-export default function KPICard({ title, value, change, trend, icon, calculationLogic }) {
+export default function KPICard({ title, value, change, trend, icon }) {
   const Icon = iconMap[icon] || TrendingUp;
 
   // Detect negative/positive from value string
@@ -21,8 +20,8 @@ export default function KPICard({ title, value, change, trend, icon, calculation
   const isPositive = trend === 'up' || (change && parseFloat(change) > 0) || hasPositiveDollar;
   const isNegative = trend === 'down' || (change && parseFloat(change) < 0) || hasNegativeDollar;
 
-  const content = (
-    <div className="bg-gradient-to-br from-[#1e293b] to-[#0f172a] rounded-xl border border-white/10 p-5 shadow-lg flex flex-col justify-between group hover:border-blue-500/30 transition-all w-full">
+  return (
+    <div className="bg-gradient-to-br from-[#1e293b] to-[#0f172a] rounded-xl border border-white/10 p-5 shadow-lg flex flex-col justify-between group hover:border-blue-500/30 transition-all">
       <div className="flex justify-between items-start mb-4">
         <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider">{title}</h3>
         <div className="p-2 rounded-lg bg-white/5 group-hover:bg-blue-500/10 transition-colors">
@@ -44,11 +43,24 @@ export default function KPICard({ title, value, change, trend, icon, calculation
     </div>
   );
 
-  return calculationLogic ? (
-    <CalculationTooltip calculationLogic={calculationLogic} className="block w-full">{content}</CalculationTooltip>
-  ) : (
-    content
-  );
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }
-
-

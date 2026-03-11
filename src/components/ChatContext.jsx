@@ -8,6 +8,8 @@ export function ChatProvider({ children }) {
   const [activeConversation, setActiveConversation] = useState(null);
   const [messages, setMessages] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  
+  // These are the missing variables causing the crash!
   const [chatInputValue, setChatInputValue] = useState("");
   const [canvasTitle, setCanvasTitle] = useState(null);
   const [expandedTurnIndex, setExpandedTurnIndex] = useState(null);
@@ -38,6 +40,8 @@ export function ChatProvider({ children }) {
   useEffect(() => {
     if (messages.length > 0) {
       sessionStorage.setItem('chatMessages', JSON.stringify(messages));
+    } else {
+      sessionStorage.removeItem('chatMessages');
     }
   }, [messages]);
 

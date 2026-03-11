@@ -38,14 +38,7 @@
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    @apply border-slate-800 outline-ring/50;
   }
-
-  body {
-    @apply bg-background text-foreground;
-    /* Prevents horizontal scrolling issues and smooths out font rendering */
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    overflow-x: hidden; 
-  }
+  /* ... */
 }

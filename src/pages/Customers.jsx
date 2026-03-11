@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from "react";
 import { 
   Users, TrendingUp, DollarSign, ShieldAlert, Target, 
-  Filter, Info, Calculator, Zap, Layers, MapPin, ChevronDown
+  Filter, Info, Calculator, Zap, Layers, MapPin
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
@@ -9,7 +9,6 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -21,8 +20,6 @@ import { useNavigate } from "react-router-dom";
  * Terminology: "Package" instead of "Plan"
  */
 
-const DMA_OPTIONS = ['Atlanta', 'Boston', 'Chicago', 'Dallas', 'Denver', 'Detroit', 'Houston', 'Los Angeles', 'Miami', 'Minneapolis', 'New York', 'Philadelphia', 'Phoenix', 'San Francisco', 'Seattle', 'Washington DC'];
-
 const TOTAL_CUSTOMERS = 2194783;
 
 export default function Customers() {
@@ -33,8 +30,7 @@ export default function Customers() {
   const [filters, setFilters] = useState({
     packages: ['Ultimate', 'Premium', 'Standard', 'Basic'],
     lob: ['Satellite', 'Stream'],
-    risk: ['Critical', 'High', 'Medium', 'Low'],
-    dma: []
+    risk: ['Critical', 'High', 'Medium', 'Low']
   });
 
   // Formatting Helper: Scales to Millions if >= 1M
@@ -59,7 +55,6 @@ export default function Customers() {
         arrAtRisk: 18245000,
         lob: 'Satellite',
         packages: ['Standard', 'Premium', 'Ultimate'],
-        dmas: ['New York', 'Chicago', 'Philadelphia', 'Dallas', 'Atlanta', 'Houston'],
         calculation: {
           arr: `Calculation: (1.18M Customers × $148.62 ARPU × 12 Months) × 1.15% Projected Structural Attrition`,
           risk: "Risk Composition: 40% Pricing fatigue, 30% Competitive fiber expansion, 30% Hardware aging."
@@ -78,29 +73,9 @@ export default function Customers() {
         arrAtRisk: 48920000,
         lob: 'Satellite',
         packages: ['Ultimate'],
-        dmas: ['Los Angeles', 'San Francisco', 'Miami', 'Washington DC', 'Boston'],
         calculation: {
           arr: `Calculation: (261k Customers × $168.45 ARPU × 12 Months) × 10.8% Churn Probability`,
           risk: "Risk Composition: 75% Competitive offer gap (Sports Bundles), 15% Macro-tightening."
-        }
-      },
-      {
-        id: "suburban_hybrid",
-        name: "Suburban Hybrid Families",
-        description: "Satellite + streaming bundle users. Strong retention but sensitive to price and content.",
-        color: "amber",
-        icon: Layers,
-        population: Math.round(TOTAL_CUSTOMERS * 0.0891),
-        avgArpu: 132.20,
-        riskScore: 38,
-        riskLevel: 'Medium',
-        arrAtRisk: 12400000,
-        lob: 'Satellite',
-        packages: ['Premium', 'Standard'],
-        dmas: ['Detroit', 'Phoenix', 'Minneapolis', 'Denver', 'Seattle'],
-        calculation: {
-          arr: `Calculation: (195k Customers × $132.20 ARPU × 12 Months) × 4.1% Blended Churn`,
-          risk: "Risk Composition: 50% Bundle price sensitivity, 50% Content overlap with stream-only."
         }
       },
       {
@@ -116,7 +91,6 @@ export default function Customers() {
         arrAtRisk: 31280000,
         lob: 'Stream',
         packages: ['Standard', 'Basic'],
-        dmas: ['New York', 'Los Angeles', 'Chicago', 'Houston', 'Phoenix', 'Philadelphia'],
         calculation: {
           arr: `Calculation: (529k Customers × $82.15 ARPU × 12 Months) × 6.2% Content Elasticity`,
           risk: "Risk Composition: 60% Content seasonality, 30% Price sensitivity."
@@ -135,54 +109,34 @@ export default function Customers() {
         arrAtRisk: 4825000,
         lob: 'Stream',
         packages: ['Basic'],
-        dmas: ['Dallas', 'Atlanta', 'Miami', 'Washington DC', 'Boston', 'San Francisco'],
         calculation: {
           arr: `Calculation: (221k Customers × $62.85 ARPU × 12 Months) × 3.2% Revenue Leakage`,
           risk: "Risk Composition: 90% Under-monetized engagement, 10% Churn risk."
         }
-      },
-      {
-        id: "cord_cutter_urban",
-        name: "Urban Cord-Cutters",
-        description: "Stream-only, price-sensitive. High churn risk but large growth potential with right content.",
-        color: "rose",
-        icon: Zap,
-        population: Math.round(TOTAL_CUSTOMERS * 0.0119),
-        avgArpu: 58.40,
-        riskScore: 61,
-        riskLevel: 'High',
-        arrAtRisk: 4200000,
-        lob: 'Stream',
-        packages: ['Basic'],
-        dmas: ['New York', 'Los Angeles', 'Chicago', 'San Francisco', 'Seattle', 'Boston'],
-        calculation: {
-          arr: `Calculation: (26k Customers × $58.40 ARPU × 12 Months) × 18% Urban Churn`,
-          risk: "Risk Composition: 70% Competition from vMVPDs, 30% Price sensitivity."
-        }
       }
     ];
 
+    // UPDATED FILTERING ENGINE
     return allSegments.filter(s => {
       const lobMatch = filters.lob.includes(s.lob);
       const packageMatch = s.packages.some(p => filters.packages.includes(p));
       const riskMatch = filters.risk.includes(s.riskLevel);
-      const dmaMatch = !filters.dma || filters.dma.length === 0 || (s.dmas && s.dmas.some(d => filters.dma.includes(d)));
-      return lobMatch && packageMatch && riskMatch && dmaMatch;
+      return lobMatch && packageMatch && riskMatch;
     });
   }, [filters]);
 
-  const toggleFilter = (/** @type {string} */ type, /** @type {string} */ value) => {
+  const toggleFilter = (type, value) => {
     setFilters(prev => ({
       ...prev,
       [type]: prev[type].includes(value) 
-        ? prev[type].filter((/** @type {string} */ v) => v !== value)
+        ? prev[type].filter(v => v !== value)
         : [...prev[type], value]
     }));
   };
 
-  const handleModelCampaign = (/** @type {string} */ segmentName) => {
+  const handleModelCampaign = (segmentName) => {
     toast.info(`Initializing Strategic Model: ${segmentName}`);
-    // Navigate to Marketing Canvas with context
+    // Navigate to War Room with context
     setTimeout(() => {
       navigate('/Home', { 
         state: { 
@@ -248,63 +202,6 @@ export default function Customers() {
               </div>
             ))}
           </div>
-          <Separator className="bg-white/5" />
-          <div className="space-y-3">
-            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">DMA</p>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  className="w-full justify-between h-9 text-xs font-normal bg-[#0f172a] border-white/10 text-slate-200 hover:bg-white/5 hover:text-white"
-                >
-                  <span className="truncate">
-                    {filters.dma.length === 0 ? 'All DMAs' : `${filters.dma.length} DMA${filters.dma.length === 1 ? '' : 's'} selected`}
-                  </span>
-                  <ChevronDown className="w-4 h-4 shrink-0 opacity-70" />
-                </Button>
-              </PopoverTrigger>
-              {/* @ts-expect-error PopoverContent accepts children */}
-              <PopoverContent align="start" className="w-64 p-0 bg-[#1e293b] border-white/10 text-white">
-                <div>
-                <div className="p-2 border-b border-white/5">
-                  <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Select DMAs</p>
-                </div>
-                <ScrollArea className="h-[280px]">
-                  <div className="p-2 space-y-1">
-                    {DMA_OPTIONS.map(dma => (
-                      <div
-                        key={dma}
-                        className="flex items-center space-x-2 rounded-md px-2 py-1.5 hover:bg-white/5 cursor-pointer"
-                        onClick={() => toggleFilter('dma', dma)}
-                      >
-                        <Checkbox
-                          id={`dma-${dma}`}
-                          checked={filters.dma.includes(dma)}
-                          onCheckedChange={() => toggleFilter('dma', dma)}
-                          onClick={(e) => e.stopPropagation()}
-                          className="data-[state=checked]:bg-blue-600 border-slate-600"
-                        />
-                        <Label htmlFor={`dma-${dma}`} className="text-sm text-slate-300 cursor-pointer flex-1 truncate">{dma}</Label>
-                      </div>
-                    ))}
-                  </div>
-                </ScrollArea>
-                {filters.dma.length > 0 && (
-                  <div className="p-2 border-t border-white/5">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="w-full h-7 text-xs text-slate-400 hover:text-white"
-                      onClick={() => setFilters(prev => ({ ...prev, dma: [] }))}
-                    >
-                      Clear selection
-                    </Button>
-                  </div>
-                )}
-                </div>
-              </PopoverContent>
-            </Popover>
-          </div>
         </ScrollArea>
       </div>
 
@@ -318,63 +215,50 @@ export default function Customers() {
         </div>
 
         {segments.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pb-12">
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 pb-12">
             {segments.map((segment) => {
               const Icon = segment.icon;
               return (
-                <div key={segment.id} className="bg-[#1e293b] border border-white/5 rounded-xl p-4 shadow-lg hover:border-white/10 transition-all flex flex-col justify-between group">
+                <div key={segment.id} className="bg-[#1e293b] border border-white/5 rounded-2xl p-6 shadow-xl hover:border-white/10 transition-all flex flex-col justify-between group">
                   <div>
-                    <div className="flex justify-between items-start gap-2 mb-2">
-                      <div className="min-w-0">
-                        <div className="flex items-center gap-2 mb-1">
-                          <Badge 
-                            variant="outline" 
-                            className={cn(
-                              "text-[10px] font-bold uppercase tracking-wider shrink-0",
-                              segment.lob === 'Satellite' ? "bg-blue-500/10 text-blue-400 border-blue-500/30" : "bg-emerald-500/10 text-emerald-400 border-emerald-500/30"
-                            )}
-                          >
-                            {segment.lob}
-                          </Badge>
-                        </div>
-                        <h3 className="text-base font-bold text-white group-hover:text-blue-400 transition-colors truncate" title={segment.name}>{segment.name}</h3>
-                      </div>
-                      <div className={cn("p-1.5 rounded-lg shrink-0", segment.lob === 'Satellite' ? "bg-blue-500/10 text-blue-400" : "bg-emerald-500/10 text-emerald-400")}>
-                        <Icon className="w-4 h-4" />
+                    <div className="flex justify-between items-start mb-4">
+                      <h3 className="text-xl font-bold text-white group-hover:text-blue-400 transition-colors">{segment.name}</h3>
+                      <div className={`p-2 rounded-lg bg-blue-500/10 text-blue-400 border border-blue-500/20 group-hover:scale-110 transition-transform`}>
+                        <Icon className="w-5 h-5" />
                       </div>
                     </div>
-                    <p className="text-[11px] text-slate-400 mb-4 leading-relaxed line-clamp-2 min-h-[32px]">{segment.description}</p>
+                    <p className="text-xs text-slate-400 mb-6 leading-relaxed min-h-[32px]">{segment.description}</p>
                     
-                    <div className="grid grid-cols-3 gap-2 mb-4">
-                      <div className="bg-slate-900/60 p-2 rounded-lg border border-white/5 text-center">
-                        <p className="text-[8px] text-slate-500 uppercase font-bold mb-0.5">Customers</p>
-                        <p className="text-sm font-mono text-white">{formatPop(segment.population)}</p>
+                    <div className="grid grid-cols-3 gap-3 mb-6">
+                      <div className="bg-slate-900/60 p-3 rounded-xl border border-white/5 text-center">
+                        <p className="text-[9px] text-slate-500 uppercase font-bold mb-1">Customers</p>
+                        <p className="text-lg font-mono text-white">{formatPop(segment.population)}</p>
                       </div>
                       <div 
                         onClick={() => setSelectedCalc({ title: 'ARR Risk Logic Detail', description: segment.calculation.arr, value: `$${(segment.arrAtRisk/1000000).toFixed(1)}M` })}
-                        className="bg-slate-900/60 p-2 rounded-lg border border-white/5 text-center cursor-pointer hover:bg-blue-900/20 transition-colors"
+                        className="bg-slate-900/60 p-3 rounded-xl border border-white/5 text-center cursor-pointer hover:bg-blue-900/20 transition-colors"
                       >
-                        <p className="text-[8px] text-slate-500 uppercase font-bold mb-0.5 flex items-center justify-center gap-0.5">ARR at Risk <Calculator className="w-2 h-2"/></p>
-                        <p className="text-sm font-mono text-white">${(segment.arrAtRisk/1000000).toFixed(1)}M</p>
+                        <p className="text-[9px] text-slate-500 uppercase font-bold mb-1 flex items-center justify-center gap-1">ARR at Risk <Calculator className="w-2 h-2"/></p>
+                        <p className="text-lg font-mono text-white">${(segment.arrAtRisk/1000000).toFixed(1)}M</p>
                       </div>
                       <div 
                         onClick={() => setSelectedCalc({ title: 'Risk Index Composition', description: segment.calculation.risk, value: `${segment.riskScore}/100` })}
-                        className="bg-slate-900/60 p-2 rounded-lg border border-white/5 text-center cursor-pointer hover:bg-rose-900/20 transition-colors"
+                        className="bg-slate-900/60 p-3 rounded-xl border border-white/5 text-center cursor-pointer hover:bg-rose-900/20 transition-colors"
                       >
-                        <p className="text-[8px] text-slate-500 uppercase font-bold mb-0.5 flex items-center justify-center gap-0.5">Risk <Info className="w-2 h-2"/></p>
-                        <p className={cn("text-sm font-mono", segment.riskScore > 60 ? "text-rose-400" : "text-emerald-400")}>{segment.riskScore}/100</p>
+                        <p className="text-[9px] text-slate-500 uppercase font-bold mb-1 flex items-center justify-center gap-1">Risk Index <Info className="w-2 h-2"/></p>
+                        <p className={cn("text-lg font-mono", segment.riskScore > 60 ? "text-rose-400" : "text-emerald-400")}>{segment.riskScore}/100</p>
                       </div>
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between border-t border-white/5 pt-3">
-                    <span className="text-[10px] text-slate-500">ARPU: <strong className="text-white font-mono">${segment.avgArpu}</strong></span>
+                  <div className="flex items-center justify-between border-t border-white/5 pt-4">
+                    <span className="text-xs text-slate-500">Avg. ARPU: <strong className="text-white font-mono">${segment.avgArpu}</strong></span>
                     <Button 
                       onClick={() => handleModelCampaign(segment.name)}
                       size="sm" 
-                      className="h-7 text-xs bg-blue-600 hover:bg-blue-500 gap-1.5 shadow-lg shadow-blue-500/10"
+                      className="bg-blue-600 hover:bg-blue-500 gap-2 shadow-lg shadow-blue-500/10"
                     >
-                      <Zap className="w-3 h-3" /> Model
+                      <Zap className="w-3 h-3" /> Model Campaign
                     </Button>
                   </div>
                 </div>
@@ -385,7 +269,7 @@ export default function Customers() {
           <div className="col-span-full py-20 text-center text-slate-500 border border-dashed border-white/10 rounded-2xl flex flex-col items-center">
             <Filter className="w-12 h-12 mb-4 opacity-20" />
             <p className="text-lg">No segments matching the current filters.</p>
-            <Button variant="ghost" onClick={() => setFilters({ packages: ['Ultimate', 'Premium', 'Standard', 'Basic'], lob: ['Satellite', 'Stream'], risk: ['Critical', 'High', 'Medium', 'Low'], dma: [] })} className="mt-4 text-blue-400">Reset Filters</Button>
+            <Button variant="ghost" onClick={() => setFilters({ packages: ['Ultimate', 'Premium', 'Standard', 'Basic'], lob: ['Satellite', 'Stream'], risk: ['Critical', 'High', 'Medium', 'Low'] })} className="mt-4 text-blue-400">Reset Filters</Button>
           </div>
         )}
       </div>

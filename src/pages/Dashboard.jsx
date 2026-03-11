@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import {
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  AreaChart, Area, PieChart, Pie, Cell
+  AreaChart, Area, PieChart, Pie, Cell, Legend
 } from 'recharts';
 import {
   TrendingUp, Users, DollarSign, PieChart as PieIcon, 
@@ -9,16 +9,8 @@ import {
 } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent as DialogContentBase, DialogHeader, DialogTitle as DialogTitleBase, DialogDescription as DialogDescriptionBase } from '@/components/ui/dialog';
-
-/** @type {React.ForwardRefExoticComponent<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>} */
-const DialogContent = DialogContentBase;
-/** @type {React.ForwardRefExoticComponent<React.HTMLAttributes<HTMLHeadingElement>, HTMLHeadingElement>} */
-const DialogTitle = DialogTitleBase;
-/** @type {React.ForwardRefExoticComponent<React.HTMLAttributes<HTMLParagraphElement>, HTMLParagraphElement>} */
-const DialogDescription = DialogDescriptionBase;
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
-import { CalculationTooltip } from '@/components/CalculationTooltip';
 
 /**
  * EXECUTIVE PULSE DASHBOARD
@@ -33,24 +25,21 @@ const KPI_CONFIG = [
     value: '2,194,783', 
     trend: '+1.2%', 
     icon: Users,
-    split: { sat: '1.32M', stream: '0.87M' },
-    calculationLogic: 'Total customers = Satellite subscribers + Streaming subscribers. Baseline from current base (2.19M).'
+    split: { sat: '1.32M', stream: '0.87M' }
   },
   { 
     label: 'Monthly Baseline Revenue', 
     value: '$265.5M', 
     trend: '+5.1%', 
     icon: DollarSign,
-    split: { sat: '$190.9M', stream: '$74.6M' },
-    calculationLogic: 'Monthly revenue = (Satellite subs × Sat ARPU) + (Stream subs × Stream ARPU). $265.5M = $190.9M + $74.6M.'
+    split: { sat: '$190.9M', stream: '$74.6M' }
   },
   { 
     label: 'Avg. ARPU (Blended)', 
     value: '$121.00', 
     trend: '+3.4%', 
     icon: TrendingUp,
-    split: { sat: '$144.60', stream: '$85.70' },
-    calculationLogic: 'Blended ARPU = Total monthly revenue / Total customers. Satellite ARPU $144.60, Stream ARPU $85.70.'
+    split: { sat: '$144.60', stream: '$85.70' }
   },
 ];
 
@@ -94,10 +83,10 @@ const CAMPAIGNS = [
 ];
 
 const REVENUE_TRENDS = [
-  { month: 'Oct 25', satellite: 205.2, stream: 58.1 },
-  { month: 'Nov 25', satellite: 199.8, stream: 61.4 },
-  { month: 'Dec 25', satellite: 195.1, stream: 65.2 },
-  { month: 'Jan 26', satellite: 192.2, stream: 70.0 },
+  { month: 'Oct 25', satellite: 188.5, stream: 68.0 },
+  { month: 'Nov 25', satellite: 189.2, stream: 70.4 },
+  { month: 'Dec 25', satellite: 189.8, stream: 72.1 },
+  { month: 'Jan 26', satellite: 190.4, stream: 73.5 },
   { month: 'Feb 26', satellite: 190.9, stream: 74.6 },
 ];
 
@@ -107,11 +96,6 @@ const CUSTOMER_PIE = [
     value: 1316870, 
     color: '#3b82f6', 
     packageSplit: "72% Premium Package / 28% Basic Package", 
-    packages: [
-      { name: 'Premium', pct: 72, customers: 948146 },
-      { name: 'Standard', pct: 18, customers: 237037 },
-      { name: 'Base', pct: 10, customers: 131687 },
-    ],
     avgPrice: "$144.60", 
     churn: "8.2%", 
     adds: "14k" 
@@ -121,11 +105,6 @@ const CUSTOMER_PIE = [
     value: 877913, 
     color: '#10b981', 
     packageSplit: "44% Premium Package / 56% Basic Package", 
-    packages: [
-      { name: 'Premium', pct: 44, customers: 386484 },
-      { name: 'Standard', pct: 28, customers: 245816 },
-      { name: 'Base', pct: 28, customers: 245613 },
-    ],
     avgPrice: "$85.70", 
     churn: "21.5%", 
     adds: "48k" 
@@ -139,7 +118,7 @@ const CustomTooltip = ({ active, payload, label }) => {
         <p className="text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-2">
           {label || payload[0].name}
         </p>
-        {payload.map((/** @type {{ name?: string; value?: number | string; color?: string; fill?: string; unit?: string }} */ entry, i) => (
+        {payload.map((entry, i) => (
           <div key={i} className="flex items-center gap-3 py-1">
             <div 
               className="w-2 h-2 rounded-full" 
@@ -166,7 +145,6 @@ const CustomTooltip = ({ active, payload, label }) => {
 export default function Dashboard() {
   const [selectedCampaign, setSelectedCampaign] = useState(null);
   const [selectedLOB, setSelectedLOB] = useState(null);
-  const [showDistributionByPackage, setShowDistributionByPackage] = useState(false);
 
   return (
     <div className="p-8 max-w-7xl mx-auto space-y-8 animate-in fade-in duration-500">
@@ -174,8 +152,7 @@ export default function Dashboard() {
       {/* 1. EXECUTIVE KPI GRID */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {KPI_CONFIG.map((kpi, idx) => (
-          <CalculationTooltip key={idx} calculationLogic={kpi.calculationLogic} className="block w-full">
-          <Card className="bg-[#1e293b] border-white/5 p-6 shadow-xl relative overflow-hidden group hover:border-blue-500/30 transition-all w-full">
+          <Card key={idx} className="bg-[#1e293b] border-white/5 p-6 shadow-xl relative overflow-hidden group hover:border-blue-500/30 transition-all">
             <div className="flex justify-between items-start mb-4">
               <div className="p-2.5 bg-blue-500/10 rounded-xl">
                 <kpi.icon className="w-5 h-5 text-blue-400" />
@@ -204,14 +181,13 @@ export default function Dashboard() {
                </div>
             </div>
           </Card>
-          </CalculationTooltip>
         ))}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         
         {/* 2. REVENUE BY LOB */}
-        <Card className="lg:col-span-2 bg-[#1e293b] border-white/5 p-8 shadow-xl overflow-hidden relative z-0">
+        <Card className="lg:col-span-2 bg-[#1e293b] border-white/5 p-8 shadow-xl">
           <div className="flex justify-between items-center mb-8">
             <h2 className="text-xl font-bold text-white flex items-center gap-2">
               <DollarSign className="w-5 h-5 text-emerald-400" /> Revenue Growth by LOB
@@ -221,7 +197,7 @@ export default function Dashboard() {
               <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-sm bg-emerald-500"></span> Stream</span>
             </div>
           </div>
-          <div className="h-[350px] w-full overflow-hidden relative">
+          <div className="h-[350px]">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={REVENUE_TRENDS}>
                 <defs>
@@ -240,6 +216,12 @@ export default function Dashboard() {
                 <Tooltip content={CustomTooltip} />
                 <Area name="Satellite" type="monotone" dataKey="satellite" stroke="#3b82f6" strokeWidth={3} fillOpacity={1} fill="url(#colorSat)" />
                 <Area name="Stream" type="monotone" dataKey="stream" stroke="#10b981" strokeWidth={3} fillOpacity={1} fill="url(#colorStream)" />
+                <Legend 
+                  verticalAlign="top" 
+                  align="right" 
+                  iconType="circle" 
+                  wrapperStyle={{ paddingTop: '0px', paddingBottom: '20px', fontSize: '12px' }} 
+                />
               </AreaChart>
             </ResponsiveContainer>
           </div>
@@ -250,14 +232,7 @@ export default function Dashboard() {
           <h2 className="text-xl font-bold text-white self-start flex items-center gap-2 mb-8">
             <PieIcon className="w-5 h-5 text-blue-400" /> Market Mix
           </h2>
-          <div 
-            className="h-[280px] w-full cursor-pointer"
-            onClick={() => setShowDistributionByPackage(true)}
-            role="button"
-            tabIndex={0}
-            onKeyDown={(e) => e.key === 'Enter' && setShowDistributionByPackage(true)}
-            aria-label="View distribution by package"
-          >
+          <div className="h-[280px] w-full cursor-pointer">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
@@ -266,6 +241,7 @@ export default function Dashboard() {
                   outerRadius={100}
                   paddingAngle={8}
                   dataKey="value"
+                  onClick={(data) => setSelectedLOB(data)}
                   stroke="none"
                 >
                   {CUSTOMER_PIE.map((entry, index) => (
@@ -294,7 +270,7 @@ export default function Dashboard() {
       </div>
 
       {/* 4. CAMPAIGN PULSE */}
-      <Card className="bg-[#1e293b] border-white/5 p-8 shadow-xl overflow-hidden relative z-10">
+      <Card className="bg-[#1e293b] border-white/5 p-8 shadow-xl overflow-hidden relative">
         <div className="flex justify-between items-center mb-8">
           <div>
             <h2 className="text-2xl font-bold text-white flex items-center gap-2">
@@ -313,7 +289,7 @@ export default function Dashboard() {
                    <h3 className="font-bold text-white text-lg group-hover:text-amber-400 transition-colors">{camp.name}</h3>
                    <p className="text-[10px] text-slate-500 uppercase font-bold tracking-widest mt-1">{camp.target}</p>
                  </div>
-                 <Badge variant="default" className={`${camp.status === 'Live' ? 'bg-emerald-500/10 text-emerald-400 border-none' : 'bg-amber-500/10 text-amber-400 border-none'}`}>
+                 <Badge className={`${camp.status === 'Live' ? 'bg-emerald-500/10 text-emerald-400 border-none' : 'bg-amber-500/10 text-amber-400 border-none'}`}>
                    {camp.status}
                  </Badge>
                </div>
@@ -344,7 +320,7 @@ export default function Dashboard() {
       {/* Campaign Drill-down */}
       <Dialog open={!!selectedCampaign} onOpenChange={() => setSelectedCampaign(null)}>
         <DialogContent className="bg-[#1e293b] border-white/10 text-white max-w-2xl">
-          <DialogHeader className="">
+          <DialogHeader>
             <div className="flex items-center gap-3 mb-2">
               <div className="p-2 bg-amber-500/10 rounded-lg"><Activity className="w-5 h-5 text-amber-400" /></div>
               <DialogTitle className="text-2xl font-bold">{selectedCampaign?.name}</DialogTitle>
@@ -386,7 +362,7 @@ export default function Dashboard() {
       {/* LOB Drill-down */}
       <Dialog open={!!selectedLOB} onOpenChange={() => setSelectedLOB(null)}>
         <DialogContent className="bg-[#1e293b] border-white/10 text-white max-w-2xl">
-          <DialogHeader className="">
+          <DialogHeader>
             <div className="flex items-center gap-3 mb-2">
               <div className="p-2 bg-blue-500/10 rounded-lg"><BarChart2 className="w-5 h-5 text-blue-400" /></div>
               <DialogTitle className="text-2xl font-bold">{selectedLOB?.name} Segment Briefing</DialogTitle>
@@ -411,41 +387,6 @@ export default function Dashboard() {
                 <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">Package Distribution</p>
                 <p className="text-slate-200 text-sm">{selectedLOB?.packageSplit}</p>
              </div>
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      {/* Market Mix - Distribution by Package (click on pie chart) */}
-      <Dialog open={showDistributionByPackage} onOpenChange={setShowDistributionByPackage}>
-        <DialogContent className="bg-[#1e293b] border-white/10 text-white max-w-2xl">
-          <DialogHeader>
-            <div className="flex items-center gap-3 mb-2">
-              <div className="p-2 bg-blue-500/10 rounded-lg"><PieIcon className="w-5 h-5 text-blue-400" /></div>
-              <DialogTitle className="text-2xl font-bold">Distribution of Customers by LOB & Package</DialogTitle>
-            </div>
-            <DialogDescription className="text-slate-400">Customer count and share by line of business and package tier.</DialogDescription>
-          </DialogHeader>
-          <div className="mt-4 space-y-6">
-            {CUSTOMER_PIE.map((lob) => (
-              <div key={lob.name} className="bg-[#0f172a] rounded-xl border border-white/5 p-5">
-                <div className="flex items-center gap-2 mb-4">
-                  <div className="w-3 h-3 rounded-full" style={{ backgroundColor: lob.color }} />
-                  <h3 className="text-lg font-bold text-white">{lob.name}</h3>
-                  <span className="text-sm text-slate-500 font-mono">{(lob.value / 1000000).toFixed(2)}M total</span>
-                </div>
-                <div className="space-y-3">
-                  {(lob.packages || []).map((pkg, i) => (
-                    <div key={i} className="flex items-center justify-between py-2 border-b border-white/5 last:border-0">
-                      <span className="text-sm text-slate-300">{pkg.name}</span>
-                      <div className="flex items-center gap-4">
-                        <span className="text-sm font-mono text-slate-200">{pkg.customers?.toLocaleString() ?? '—'} customers</span>
-                        <span className="text-sm font-mono font-bold text-white w-12 text-right">{pkg.pct}%</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ))}
           </div>
         </DialogContent>
       </Dialog>

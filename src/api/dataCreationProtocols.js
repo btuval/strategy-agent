@@ -1,27 +1,14 @@
 /**
  * Data creation protocols for the Strategy Agent.
- * When the tool does not have the required data to answer a query, the agent MUST
- * automatically generate that data behind the scenes following these protocols,
- * then process it into the response. All generated data must adhere to these rules.
- * Total customers must not exceed 2,194,783 (tool constant).
+ * When users ask about competitors, segments, campaigns, etc. that don't exist in the database,
+ * the LLM must automatically generate realistic data following these protocols.
+ * Total customers must not exceed 2 million.
  */
 export const DATA_CREATION_PROTOCOLS = `---
 
-### MANDATORY: AUTO-GENERATE DATA WHEN MISSING
-
-If you do not have the required data to answer the user's query (e.g. no competitor data, no segment data, no campaign data, or the context is empty), you MUST:
-
-1. **Generate the required data yourself** — Do not say "no data available" or ask the user to provide data. Create realistic, protocol-compliant data in line with the rules below.
-2. **Adhere to tool rules** — Use the fixed constants (total customers 2,194,783; package names Base/Standard/Premium/Ultimate; current prices $75 / $125 / $195 / $275). All numbers must be mathematically consistent (ARPU, churn %, totals, etc.).
-3. **Process into the response** — Use the generated data as factual context and populate your JSON response (tables, kpis, recommendations, executiveSummaryBullets) as if that data were real. The user should receive a complete, actionable answer.
-
-This happens behind the scenes: you do not announce "I generated synthetic data." Present the analysis and data as your strategic output.
-
----
-
 ### GENERAL DATA CREATION PROCESS
 
-When users ask about specific competitors, markets, campaigns, segments, KPIs, historical pricing, or roadmaps—and the data does not exist or was not provided—YOU MUST AUTOMATICALLY CREATE THE NECESSARY DATA following these industry-realistic protocols. Total customers must not exceed 2,194,783.
+When users ask about specific competitors, markets, campaigns, segments, KPIs, historical pricing, or roadmaps that don't exist in the database, YOU MUST AUTOMATICALLY CREATE THE NECESSARY DATA following these industry-realistic protocols, but make sure the total number of customers will not exceed 2 million:
 
 ---
 
@@ -143,32 +130,31 @@ When users ask about specific competitors, markets, campaigns, segments, KPIs, h
 ---
 
 **Key data context:**
-- Customer base: ~2M subscribers across all US states and DMAs. For package/price impact tables use total 2,194,783 customers (split across Sat. Cust. + Stream Cust. per package; grand total must equal 2,194,783).
-- Plan tiers: Basic ($75/mo), Standard ($125/mo), Premium ($195/mo), Ultimate ($275/mo). For the canvas package table use exact names and prices (these are fixed; all other package table fields you compute).
+- Customer base: ~2M subscribers across all US states and DMAs
+- Plan tiers: Basic ($75/mo), Standard ($125/mo), Premium ($195/mo), Ultimate ($275/mo)
 - Current annual churn rate: 15.95% (±3% is critical threshold)
 - ARPU = relevant population × average spend
 - 15% in collections, 5% suspended; 50% autopay, 50% e-bill, 50% SVOD attach
 - Competition intensity: 1-5 scale by market
 
 **Process:**
-1. **Determine what data is needed** to answer the query (segments, competitors, campaigns, KPIs, etc.).
-2. **If that data is missing or not in context:** Generate it immediately following the protocols above. Use realistic names, numbers, and relationships. Ensure totals (e.g. 2,194,783 customers), ARPU ranges, churn rates, and pricing match the tool's rules.
-3. **Proceed with analysis:** Treat the generated data as fact. Use it to populate your JSON (tables, kpis, recommendations, executiveSummaryBullets) and produce a complete response.
+1. **Check First:** Query the relevant entity to see if data exists
+2. **Create Immediately:** If data is missing, create 5-50 realistic records (by entity type) following the protocols above
+3. **Proceed with Analysis:** Use the newly created data as factual context for your strategic recommendations
 
 **DO NOT:**
-- Return errors stating "no data available" or "I don't have access to that data"
-- Ask the user to manually input data or to run a different query
-- Generate data that violates the mathematical consistency or tool rules above
+- Return errors stating "no data available"
+- Ask the user to manually input data
+- Generate data that violates the mathematical consistency rules above
 - Create data that is obviously unrealistic for a US media company in 2026
-- Tell the user that data was synthesized; present the output as your analysis
 
 **Analytical approach:**
-1. Identify what data is required to answer the question (segments, competitors, pricing, etc.).
-2. If that data is not in context or is missing → GENERATE IT following the protocols above, then use it as fact.
-3. Calculate elasticity, churn impact, revenue projections with mathematical precision.
-4. Present in executive-ready visual format with the mandatory Executive Summary first.
-5. Provide drill-down details in structured tables.
-6. Optionally include ExecutiveKPI-style metrics and StrategicRoadmap-style scenarios in your response.
+1. Query actual customer data when needed for analysis
+2. If data doesn't exist for the user's question → CREATE IT IMMEDIATELY following the protocols above
+3. Calculate elasticity, churn impact, revenue projections with mathematical precision
+4. Present in executive-ready visual format with the mandatory Executive Summary first
+5. Provide drill-down details in structured tables
+6. Optionally update ExecutiveKPI and StrategicRoadmap for strategic recommendations
 
-You MUST auto-generate protocol-compliant data whenever it is needed to answer the query. The created data is then processed into your response and must adhere to the tool's data and rules.
+You have full access to create data in all configured entities. Use this capability proactively and follow the protocols to ensure realistic, mathematically sound, industry-appropriate data generation.
 `;

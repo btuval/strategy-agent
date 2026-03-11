@@ -16,10 +16,6 @@ import { getFallbackStrategyResponse } from "@/api/fallbackStrategy";
 import { jsonrepair } from "jsonrepair";
 import { prompts as suggestedPrompts } from "@/components/chat/SuggestedPrompts";
 
-/**
- * Derive a display title for the canvas from the user's message (e.g. match predefined prompts).
- * @param {string} message
- */
 function deriveCanvasTitle(message) {
   if (!message || typeof message !== "string") return "Strategy";
   const trimmed = message.trim();
@@ -32,50 +28,37 @@ function deriveCanvasTitle(message) {
   return found ? found.title : "Custom Strategy";
 }
 
-// --- HELPER: Robust LLM Response Cleaner ---
-// This strips Markdown, Python list artifacts, and whitespace
-// to ensure both the Chat UI and the Canvas Dashboard get valid JSON.
-/** @param {string} content */
 const cleanLLMResponse = (content) => {
   if (typeof content !== 'string') return content;
-  
   let cleaned = content.trim();
-  
-  // 1. Remove Markdown code blocks (```json ... ```)
   cleaned = cleaned.replace(/^```json\s*/, "").replace(/^```\s*/, "").replace(/\s*```$/, "");
-
-  // 2. Handle the specific array format ['json', '{...}'] if it appears
   if (cleaned.startsWith("['json'") || cleaned.startsWith('["json"')) {
     try {
       const firstBracket = cleaned.indexOf('{');
       const lastBracket = cleaned.lastIndexOf('}');
       if (firstBracket !== -1 && lastBracket !== -1) {
         cleaned = cleaned.substring(firstBracket, lastBracket + 1);
-        cleaned = cleaned.replace(/\\"/g, '"'); // Fix escaped quotes
+        cleaned = cleaned.replace(/\\"/g, '"'); 
       }
     } catch (e) {
       console.error("Failed to extract JSON from array format", e);
     }
   }
-
-  // 3. Extract JSON object if stuck inside other text (so canvas can parse it)
   const firstBrace = cleaned.indexOf('{');
   const lastBrace = cleaned.lastIndexOf('}');
   if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
     cleaned = cleaned.substring(firstBrace, lastBrace + 1);
   }
-
   return cleaned.trim();
 };
 
-// Global Chat Sidebar Component
 function ChatSidebar() {
-  const { messages, setMessages, isLoading, setIsLoading, chatInputValue, setChatInputValue, setCanvasTitle, expandedTurnIndex, setExpandedTurnIndex } = useChatContext();
+  // FIX 1: We pull clearHistory from the context
+  const { messages, setMessages, isLoading, setIsLoading, chatInputValue, setChatInputValue, setCanvasTitle, expandedTurnIndex, setExpandedTurnIndex, clearHistory } = useChatContext();
   const scrollRef = useRef(null);
   const textareaRef = useRef(null);
   const location = useLocation();
 
-  // Group messages into turns: each turn = one user message + following assistant message(s)
   const turns = React.useMemo(() => {
     const result = [];
     const list = Array.isArray(messages) ? messages : [];
@@ -90,7 +73,6 @@ function ChatSidebar() {
     return result;
   }, [messages]);
 
-  // Keep last turn expanded when messages change; default to last when turns exist
   useEffect(() => {
     if (turns.length === 0) {
       setExpandedTurnIndex(null);
@@ -103,7 +85,6 @@ function ChatSidebar() {
     scrollRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isLoading]);
 
-  // Auto-expand textarea when value changes (type or paste)
   useEffect(() => {
     const el = textareaRef.current;
     if (!el) return;
@@ -115,7 +96,7 @@ function ChatSidebar() {
   }, [chatInputValue]);
 
   const handleSend = async () => {
-    if (!chatInputValue.trim() || isLoading) return;
+    if (!(chatInputValue || '').trim() || isLoading) return;
     
     const pageContext = `Current Screen: ${location.pathname}. `;
     const userMsg = { id: Date.now(), role: "user", content: chatInputValue };
@@ -125,7 +106,6 @@ function ChatSidebar() {
     if (isFirstMessage) setCanvasTitle(deriveCanvasTitle(chatInputValue));
     setChatInputValue("");
     setIsLoading(true);
-    // Reset textarea height after send
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";
     }
@@ -180,7 +160,7 @@ function ChatSidebar() {
         </div>
         <button
           type="button"
-          onClick={() => setMessages([])}
+          onClick={clearHistory} // FIX 2: We use clearHistory to purge session storage completely
           className="rounded-full px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-slate-400 hover:text-white hover:bg-white/10 border border-white/10 transition-colors"
         >
           New Chat
@@ -271,7 +251,7 @@ function ChatSidebar() {
           <textarea
             ref={textareaRef}
             dir="ltr"
-            value={chatInputValue}
+            value={chatInputValue || ''}
             onChange={(e) => setChatInputValue(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && (e.preventDefault(), handleSend())}
             placeholder="Type a strategic query..."
@@ -281,7 +261,7 @@ function ChatSidebar() {
           <Button
             size="icon"
             onClick={handleSend}
-            disabled={isLoading || !chatInputValue.trim()}
+            disabled={isLoading || !(chatInputValue || '').trim()}
             className="absolute right-2 bottom-2 h-8 w-8 bg-blue-600 hover:bg-blue-500 rounded-lg"
           >
             <Send className="w-4 h-4" />
@@ -382,12 +362,14 @@ export default function Layout({ children }) {
           </div>
         </nav>
 
-        {/* 3. MAIN BODY - Sidebar + Content */}
+        {/* 3. MAIN BODY */}
         <div className="flex flex-1 overflow-hidden">
+          
           <ChatSidebar />
-          <main className="flex-1 relative overflow-hidden flex flex-col bg-slate-950/20">
-            {children}
+          
+          <main id="main-scroll-container" className="flex-1 relative overflow-y-auto overflow-x-hidden flex flex-col bg-slate-950/20 scroll-smooth">            {children}
           </main>
+
         </div>
       </div>
       </TooltipProvider>

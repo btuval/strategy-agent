@@ -4,35 +4,8 @@ import {
   XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer 
 } from 'recharts';
 
-// Fallback data so the chart always shows valuable information when LLM returns empty/invalid config
-const FALLBACK_CHART = {
-  chartType: 'bar',
-  title: 'Key Metrics Overview',
-  xAxisKey: 'name',
-  series: [
-    { dataKey: 'value', name: 'Value', color: '#6366f1' },
-  ],
-  data: [
-    { name: 'Subscribers', value: 2000 },
-    { name: 'Revenue ($K)', value: 2420 },
-    { name: 'ARPU ($)', value: 121 },
-    { name: 'Churn %', value: 13 },
-    { name: 'Acquired', value: 36 },
-  ],
-};
-
-function getValidConfig(config) {
-  const hasData = config?.data && Array.isArray(config.data) && config.data.length > 0;
-  const hasSeries = config?.series && Array.isArray(config.series) && config.series.length > 0;
-  if (hasData && hasSeries && config.chartType) {
-    return config;
-  }
-  return FALLBACK_CHART;
-}
-
 export function FlexibleChart({ config }) {
-  const safeConfig = getValidConfig(config);
-  const { chartType, title, xAxisKey, series, data } = safeConfig;
+  const { chartType, title, xAxisKey, series, data } = config;
 
   const DEFAULT_COLORS = ['#6366f1', '#10b981', '#f43f5e', '#f59e0b', '#8b5cf6'];
 
@@ -53,7 +26,6 @@ export function FlexibleChart({ config }) {
         axisLine={false} 
         tickFormatter={(val) => val >= 1000 ? `${val/1000}k` : val}
         fontSize={12}
-        domain={['auto', 0]} // Forces the 0 line to be at the top/bottom for negative/positive data
       />
       <Tooltip 
         contentStyle={{ backgroundColor: '#0f172a', borderColor: '#1e293b', borderRadius: '8px' }}

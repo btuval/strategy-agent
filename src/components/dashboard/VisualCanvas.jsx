@@ -1,9 +1,9 @@
 import React from "react";
+import { BarChart, Bar, Tooltip, ResponsiveContainer, Cell } from "recharts";
 import { TrendingUp, Target, Zap, PlayCircle, BarChart3, AlertCircle } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Button } from "@/components/ui/button";
-import { CalculationTooltip } from "@/components/CalculationTooltip";
 
 export default function VisualCanvas({ parsedData, isThinking }) {
   
@@ -56,18 +56,14 @@ export default function VisualCanvas({ parsedData, isThinking }) {
                   const isPositive = kpi.trend === "up";
                   const isFlat = kpi.trend === "flat";
                   const colorClass = isFlat ? 'bg-amber-500/10 border-amber-500/20 text-amber-400' : isPositive ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400' : 'bg-rose-500/10 border-rose-500/20 text-rose-400';
-                  const pill = (
+                  
+                  return (
                     <div key={idx} className={`border px-4 py-2.5 rounded-lg flex items-center gap-3 ${colorClass}`}>
                       <TrendingUp className={`w-4 h-4 ${!isPositive && !isFlat ? 'transform rotate-180' : ''}`} />
                       <span className="text-sm text-slate-200">
                         {kpi.label}: <strong className={`font-mono text-base ${isFlat ? 'text-amber-400' : isPositive ? 'text-emerald-400' : 'text-rose-400'}`}>{kpi.value}</strong>
                       </span>
                     </div>
-                  );
-                  return kpi.calculationLogic ? (
-                    <CalculationTooltip key={idx} calculationLogic={kpi.calculationLogic} className="inline-flex">{pill}</CalculationTooltip>
-                  ) : (
-                    pill
                   );
                 })}
               </div>
@@ -132,6 +128,29 @@ export default function VisualCanvas({ parsedData, isThinking }) {
                      </ul>
                    </div>
                 </div>
+
+                {/* Chart Data */}
+                {scenario.chartData && scenario.chartData.length > 0 && (
+                  <div className="p-6 border-t border-white/5">
+                    <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-4">Segment Impact Projection</h4>
+                    <div className="h-[180px] w-full">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <BarChart data={scenario.chartData}>
+                          <Tooltip 
+                            cursor={{ fill: 'rgba(255,255,255,0.05)' }}
+                            contentStyle={{ backgroundColor: 'rgba(15, 23, 42, 0.9)', borderColor: 'rgba(255,255,255,0.1)', borderRadius: '8px', color: '#fff' }}
+                            itemStyle={{ color: '#818cf8', fontWeight: 'bold' }}
+                          />
+                          <Bar dataKey="value" radius={[4, 4, 0, 0]}>
+                             {scenario.chartData.map((entry, index) => (
+                               <Cell key={`cell-${index}`} fill={index % 2 === 0 ? '#6366f1' : '#38bdf8'} />
+                             ))}
+                          </Bar>
+                        </BarChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </div>
+                )}
 
                 {/* Card Action */}
                 <div className="p-6 pt-4 mt-auto border-t border-white/5">
