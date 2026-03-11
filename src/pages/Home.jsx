@@ -12,7 +12,6 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 
 // --- 1. Dashboard Sub-Components ---
 
-// Reusable Helper for Table Header Tooltips
 const TooltipHeader = ({ title, info }) => (
   <Tooltip>
     <TooltipTrigger asChild>
@@ -74,8 +73,43 @@ const ImpactCard = ({ icon: Icon, label, value, colorClass, logic }) => (
   </Tooltip>
 );
 
+const AuditFindingsTable = ({ data }) => {
+  // UI SAFETY CHECK: Only render if array exists AND has items
+  if (!data?.auditFindings || data.auditFindings.length === 0) return null;
+  return (
+    <div className="bg-rose-900/10 border border-rose-500/20 rounded-xl p-6 overflow-hidden">
+      <h3 className="text-xs font-bold text-rose-400 uppercase tracking-widest mb-5 flex items-center gap-2"><AlertCircle className="w-4 h-4" /> Revenue Leakage & Audit Findings</h3>
+      <div className="overflow-x-auto">
+        <table className="w-full text-left text-xs">
+          <thead className="text-slate-500 border-b border-white/5 uppercase font-bold">
+            <tr>
+              <th className="pb-4 px-2">Leakage Category</th>
+              <th className="pb-4 px-2"><TooltipHeader title="Impacted Accounts" info="Number of subscriber accounts exhibiting this anomaly." /></th>
+              <th className="pb-4 px-2"><TooltipHeader title="Monthly Leakage" info="Estimated unbilled revenue per month." /></th>
+              <th className="pb-4 px-2"><TooltipHeader title="Annual Opportunity" info="Projected annualized recovery amount." /></th>
+              <th className="pb-4 px-2"><TooltipHeader title="Recovery Effort" info="Operational complexity to correct the billing discrepancy." /></th>
+            </tr>
+          </thead>
+          <tbody className="text-slate-300 divide-y divide-white/5 font-mono">
+            {data.auditFindings.map((row, i) => (
+              <tr key={i} className="hover:bg-white/5 transition-colors">
+                <td className="py-4 px-2 font-sans font-medium text-white">{row.category}</td>
+                <td className="py-4 px-2 text-amber-400 font-semibold">{row.impactedAccounts}</td>
+                <td className="py-4 px-2 text-rose-400">{row.monthlyLeakage}</td>
+                <td className="py-4 px-2 text-emerald-400 font-bold">{row.annualOpportunity}</td>
+                <td className="py-4 px-2 text-orange-400 uppercase text-[10px] tracking-widest">{row.recoveryEffort}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+};
+
 const PackageModelTable = ({ data }) => {
-  if (!data?.packageTableData) return null;
+  // UI SAFETY CHECK: Only render if array exists AND has items
+  if (!data?.packageTableData || data.packageTableData.length === 0) return null;
   return (
     <div className="bg-slate-900/20 border border-white/5 rounded-xl p-6 overflow-hidden">
       <h3 className="text-xs font-bold text-blue-400 uppercase tracking-widest mb-5 flex items-center gap-2"><Target className="w-4 h-4" /> Package Analysis</h3>
@@ -113,7 +147,8 @@ const PackageModelTable = ({ data }) => {
 
 const ChurnModelTable = ({ data }) => {
   const segments = data?.segmentTableData || data?.tableData;
-  if (!segments) return null;
+  // UI SAFETY CHECK: Only render if array exists AND has items
+  if (!segments || segments.length === 0) return null;
   return (
     <div className="bg-slate-900/20 border border-white/5 rounded-xl p-6 overflow-hidden">
       <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-5 flex items-center gap-2"><Activity className="w-4 h-4" /> Segment Impact</h3>
@@ -150,7 +185,8 @@ const ChurnModelTable = ({ data }) => {
 };
 
 const ScenarioComparisonTable = ({ data }) => {
-  if (!data?.scenarioComparison) return null;
+  // UI SAFETY CHECK: Only render if array exists AND has items
+  if (!data?.scenarioComparison || data.scenarioComparison.length === 0) return null;
   return (
     <div className="bg-slate-900/20 border border-white/5 rounded-xl p-6 overflow-hidden">
       <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-5 flex items-center gap-2"><BarChart3 className="w-4 h-4 text-blue-400" /> Scenario Matrix</h3>
@@ -183,6 +219,7 @@ const ScenarioComparisonTable = ({ data }) => {
 };
 
 const RecommendationCards = ({ data }) => {
+  // UI SAFETY CHECK: Only render if array exists AND has items
   if (!data?.scenarios || data.scenarios.length === 0) return null;
   return (
     <div className="space-y-6 mt-8">
@@ -279,6 +316,7 @@ const StrategyResultItem = ({ item, isLatest, isOpen, onToggle }) => {
           )}
 
           <div className="flex flex-col space-y-10">
+            <AuditFindingsTable data={item.data} />
             <PackageModelTable data={item.data} />
             <ChurnModelTable data={item.data} />
           </div>

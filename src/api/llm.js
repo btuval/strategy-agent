@@ -30,15 +30,33 @@ export async function completeWithGemini(conversationMessages) {
     (m) => m.role === 'user' || m.role === 'assistant'
   );
 
-  // FIX: WIPE OLD JSON MEMORY. 
-  // If we leave the massive tables in history, the AI gets lazy and copies them.
-  // This forces it to recalculate the math for EVERY prompt.
+  // FIX: SMART CONTEXT PRESERVATION
+  // We extract the titles of the strategies and findings the AI just generated.
+  // This allows the AI to remember its own recommendations so you can ask
+  // follow-up questions like "Deep dive into the Phased Recovery strategy."
   const cleanedContents = history.map((m) => {
     let textStr = typeof m.content === 'string' ? m.content : JSON.stringify(m.content);
     
-    // Scrub massive JSON blocks from the assistant's memory
     if (m.role === 'assistant' && textStr.includes('{') && textStr.length > 300) {
-      textStr = '{"chatResponse": "Previous scenario successfully modeled. I will generate completely fresh data for the next query."}';
+      try {
+        const parsed = JSON.parse(textStr);
+        const title = parsed.queryTitle || "a strategic analysis";
+        
+        // Extract the names of the things it generated
+        const findings = parsed.auditFindings && parsed.auditFindings.length > 0 
+          ? " Audit Categories found: " + parsed.auditFindings.map(f => f.category).join(", ") + "."
+          : "";
+          
+        const strategies = parsed.scenarios && parsed.scenarios.length > 0
+          ? " Strategies proposed: " + parsed.scenarios.map(s => s.title).join(", ") + "."
+          : "";
+
+        textStr = JSON.stringify({ 
+          chatResponse: `[SYSTEM MEMORY]: I previously generated an analysis titled '${title}'.${findings}${strategies} I will use this context to answer the user's follow-up accurately.` 
+        });
+      } catch (e) {
+        textStr = '{"chatResponse": "Previous scenario successfully modeled. Awaiting follow-up."}';
+      }
     }
     
     return {
@@ -50,7 +68,6 @@ export async function completeWithGemini(conversationMessages) {
   const payload = {
     systemInstruction: { parts: [{ text: STRATEGY_AGENT_SYSTEM_PROMPT }] },
     contents: cleanedContents,
-    // Turn the temperature up slightly to force creative variance in the numbers
     generationConfig: { maxOutputTokens: 8192, temperature: 0.4 },
   };
 
