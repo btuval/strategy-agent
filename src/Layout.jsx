@@ -16,6 +16,11 @@ import { getFallbackStrategyResponse } from "@/api/fallbackStrategy";
 import { jsonrepair } from "jsonrepair";
 import { prompts as suggestedPrompts } from "@/components/chat/SuggestedPrompts";
 
+// Clean URL Variables to prevent Markdown copy-paste errors
+const YOUTUBE_TV_LINK = "https://www.techradar.com/streaming/youtube-tv-has-finally-rolled-out-its-more-affordable-subscription-plans-heres-the-breakdown-of-the-new-tiers";
+const HULU_LINK = "https://www.yahoo.com/entertainment/tv/articles/hulu-just-added-marvel-unique-050500065.html";
+const FUBO_LINK = "https://www.businessinsider.com/guides/streaming/fubo-tv-price-channels";
+
 function deriveCanvasTitle(message) {
   if (!message || typeof message !== "string") return "Strategy";
   const trimmed = message.trim();
@@ -53,7 +58,6 @@ const cleanLLMResponse = (content) => {
 };
 
 function ChatSidebar() {
-  // FIX 1: We pull clearHistory from the context
   const { messages, setMessages, isLoading, setIsLoading, chatInputValue, setChatInputValue, setCanvasTitle, expandedTurnIndex, setExpandedTurnIndex, clearHistory } = useChatContext();
   const scrollRef = useRef(null);
   const textareaRef = useRef(null);
@@ -160,7 +164,7 @@ function ChatSidebar() {
         </div>
         <button
           type="button"
-          onClick={clearHistory} // FIX 2: We use clearHistory to purge session storage completely
+          onClick={clearHistory}
           className="rounded-full px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-slate-400 hover:text-white hover:bg-white/10 border border-white/10 transition-colors"
         >
           New Chat
@@ -297,77 +301,109 @@ export default function Layout({ children }) {
   return (
     <ChatProvider>
       <TooltipProvider delayDuration={200}>
-      <div className="min-h-screen bg-[#0f172a] flex flex-col font-sans text-slate-200 overflow-hidden">
+      <div className="fixed inset-0 bg-[#0f172a] flex flex-col font-sans text-slate-200 overflow-hidden">
         
-        {/* 1. STRATEGIC COMPETITOR TICKER */}
-        <div className="bg-slate-950 border-b border-white/5 py-1.5 px-6 flex justify-between items-center text-[10px] uppercase tracking-widest font-mono z-50">
-          <div className="flex gap-10 overflow-hidden whitespace-nowrap items-center">
-            <span className="flex items-center gap-1.5 text-blue-400 font-bold">
-              <ShieldAlert className="w-3.5 h-3.5" />
-              COMPETITOR INTEL:
-            </span>
-            <span className="flex items-center gap-1.5 text-rose-400">
-              <AlertTriangle className="w-3 h-3 animate-pulse" />
-              <span className="text-slate-500">YouTube TV:</span> High-Aggression Q3 Promo ($49.99 Entry) in Tier 1 DMAs
-            </span>
-            <span className="flex items-center gap-1.5 text-amber-400 border-l border-white/10 pl-10">
-              <TrendingDown className="w-3 h-3" />
-              <span className="text-slate-500">Hulu + Live:</span> Disney+ Bundle integration driving 4.2% Switch Intent
-            </span>
-            <span className="flex items-center gap-1.5 text-emerald-400 border-l border-white/10 pl-10">
-              <Target className="w-3 h-3" />
-              <span className="text-slate-500">Fubo:</span> Regional Sports Rights Acquisition finalized in SE Territory
-            </span>
-          </div>
-          <div className="flex items-center gap-2 flex-shrink-0 ml-6 text-slate-500">
-            <span className="text-blue-500 font-bold italic">Strategy_Agent_v2</span>
-            <span className="opacity-50">// Live_Intel_Stream</span>
-          </div>
-        </div>
+        <header className="flex-shrink-0 w-full z-50 bg-[#0f172a] shadow-md border-b border-white/10">
+          
+          {/* 1. STRATEGIC COMPETITOR TICKER (Using clean constants to prevent Markdown errors) */}
+          <div className="bg-slate-900/50 border-b border-blue-500/30 py-2.5 px-6 flex justify-between items-center text-xs md:text-sm font-semibold tracking-wide">
+            <div className="flex gap-10 overflow-hidden whitespace-nowrap items-center">
+              <span className="flex items-center gap-2 text-blue-400 font-black uppercase tracking-widest">
+                <ShieldAlert className="w-4 h-4" />
+                COMPETITOR INTEL:
+              </span>
+              
+              {/* YouTube TV Link */}
+              <a 
+                href={YOUTUBE_TV_LINK}
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 text-rose-400 hover:text-rose-300 transition-colors cursor-pointer group"
+              >
+                <AlertTriangle className="w-4 h-4 animate-pulse group-hover:scale-110 transition-transform" />
+                <span className="text-slate-300 group-hover:text-white transition-colors">YouTube TV:</span> 
+                <span className="group-hover:underline decoration-rose-400/50 underline-offset-4">High-Aggression Q3 Promo ($49.99 Entry) in Tier 1 DMAs</span>
+              </a>
 
-        {/* 2. MAIN NAVIGATION */}
-        <nav className="bg-[#1e293b] border-b border-white/10 shadow-sm z-40 relative">
-          <div className="max-w-full mx-auto px-6">
-            <div className="flex justify-between h-14 items-center">
-              <div className="flex items-center space-x-8">
-                <Link to="/" className="flex items-center flex-shrink-0 py-1 pr-3 rounded-lg -ml-1 hover:bg-white/5 transition-colors" aria-label="IMAGINE TV Home">
-                  <span className="text-xl font-bold tracking-tight" style={{ color: '#00A8E0' }}>IMAGINE TV</span>
-                </Link>
-                {navItems.map((item) => {
-                  const path = `/${item.page}`;
-                  const isActive = location.pathname === path || (item.page === 'Home' && location.pathname === '/');
-                  return (
-                    <Link
-                      key={item.page}
-                      to={path}
-                      className={cn(
-                        "inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors",
-                        isActive ? "border-blue-500 text-blue-400" : "border-transparent text-slate-400 hover:text-white"
-                      )}
-                    >
-                      <item.icon className="w-4 h-4 mr-2" />
-                      {item.name}
-                    </Link>
-                  );
-                })}
-              </div>
-              <div className="flex items-center gap-2 text-sm text-slate-300">
-                <User className="w-4 h-4 text-slate-500 flex-shrink-0 mt-0.5" />
-                <div className="flex flex-col leading-tight">
-                  <span className="text-slate-500 text-xs">Welcome Back</span>
-                  <span className="font-medium text-slate-200">Tuval</span>
+              {/* Hulu Link */}
+              <a 
+                href={HULU_LINK}
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 text-amber-400 border-l border-white/10 pl-10 hover:text-amber-300 transition-colors cursor-pointer group"
+              >
+                <TrendingDown className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                <span className="text-slate-300 group-hover:text-white transition-colors">Hulu + Live:</span> 
+                <span className="group-hover:underline decoration-amber-400/50 underline-offset-4">Disney+ Bundle integration driving 4.2% Switch Intent</span>
+              </a>
+
+              {/* Fubo Link */}
+              <a 
+                href={FUBO_LINK}
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 text-emerald-400 border-l border-white/10 pl-10 hover:text-emerald-300 transition-colors cursor-pointer group"
+              >
+                <Target className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                <span className="text-slate-300 group-hover:text-white transition-colors">Fubo:</span> 
+                <span className="group-hover:underline decoration-emerald-400/50 underline-offset-4">Regional Sports Rights Acquisition finalized in SE Territory</span>
+              </a>
+            </div>
+            
+            <div className="flex items-center gap-2 flex-shrink-0 ml-6 text-slate-400 font-mono text-[11px]">
+              <span className="text-blue-400 font-bold italic">Strategy_Agent_v2</span>
+              <span className="opacity-50">// Live_Intel_Stream</span>
+            </div>
+          </div>
+
+          {/* 2. MAIN NAVIGATION */}
+          <nav className="bg-[#1e293b] shadow-sm relative">
+            <div className="max-w-full mx-auto px-6">
+              <div className="flex justify-between h-14 items-center">
+                <div className="flex items-center space-x-8">
+                  <Link to="/" className="flex items-center flex-shrink-0 py-1 pr-3 rounded-lg -ml-1 hover:bg-white/5 transition-colors" aria-label="IMAGINE TV Home">
+                    <span className="text-xl font-bold tracking-tight" style={{ color: '#00A8E0' }}>IMAGINE TV</span>
+                  </Link>
+                  {navItems.map((item) => {
+                    const path = `/${item.page}`;
+                    const isActive = location.pathname === path || (item.page === 'Home' && location.pathname === '/');
+                    return (
+                      <Link
+                        key={item.page}
+                        to={path}
+                        className={cn(
+                          "inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors",
+                          isActive ? "border-blue-500 text-blue-400" : "border-transparent text-slate-400 hover:text-white"
+                        )}
+                      >
+                        <item.icon className="w-4 h-4 mr-2" />
+                        {item.name}
+                      </Link>
+                    );
+                  })}
+                </div>
+                {/* 3. USER PROFILE */}
+                <div className="flex items-center gap-3 pr-8 md:pr-12">
+                  <div className="p-2 bg-slate-800/80 rounded-full border border-slate-700 shadow-inner">
+                    <User className="w-5 h-5 text-blue-400 flex-shrink-0" />
+                  </div>
+                  <div className="flex flex-col leading-none">
+                    <span className="text-slate-400 text-[11px] font-bold uppercase tracking-wider mb-1">Welcome Back</span>
+                    <span className="font-black text-white text-base tracking-wide">Tuval</span>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </nav>
+          </nav>
+        </header>
 
-        {/* 3. MAIN BODY */}
+        {/* 4. MAIN BODY */}
         <div className="flex flex-1 overflow-hidden">
           
           <ChatSidebar />
           
-          <main id="main-scroll-container" className="flex-1 relative overflow-y-auto overflow-x-hidden flex flex-col bg-slate-950/20 scroll-smooth">            {children}
+          <main id="main-scroll-container" className="flex-1 relative overflow-y-auto overflow-x-hidden flex flex-col bg-slate-950/20 scroll-smooth">            
+            {children}
           </main>
 
         </div>
